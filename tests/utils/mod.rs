@@ -2,7 +2,7 @@ use std::vec;
 
 use madepro::{
     config::Config,
-    models::{Action, Model, Policy, State, StateValue, MDP},
+    models::{Action, Policy, Sampler, State, StateValue, MDP},
 };
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;
@@ -25,7 +25,7 @@ impl GridworldState {
     }
 }
 
-impl Model for GridworldState {
+impl Sampler for GridworldState {
     type IntoIter = vec::IntoIter<Self>;
 
     fn get_all() -> Self::IntoIter {
@@ -44,7 +44,7 @@ pub enum GridworldAction {
     Up,
 }
 
-impl Model for GridworldAction {
+impl Sampler for GridworldAction {
     type IntoIter = vec::IntoIter<Self>;
 
     fn get_all() -> Self::IntoIter {

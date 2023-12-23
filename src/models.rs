@@ -7,7 +7,7 @@ use std::hash::Hash;
 ///
 /// This trait represents a model in the MDP.\
 /// `State` and `Action` extend this trait.
-pub trait Model: Copy + Eq + Hash + Debug {
+pub trait Sampler: Copy + Eq + Hash + Debug {
     type IntoIter: IntoIterator<Item = Self>;
 
     /// Returns an iterator over all items.
@@ -24,13 +24,13 @@ pub trait Model: Copy + Eq + Hash + Debug {
 ///
 /// This trait represents a state in the MDP.\
 /// You can implement it on a custom struct for instance.
-pub trait State: Model {}
+pub trait State: Sampler {}
 
 /// # Action
 ///
 /// An action type must implement this trait.\
 /// You can implement it on a custom enum for instance.
-pub trait Action: Model {}
+pub trait Action: Sampler {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Policy<S, A>(HashMap<S, A>)

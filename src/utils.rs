@@ -1,6 +1,6 @@
 use crate::{
     config::Config,
-    models::{Model, Policy, StateValue, MDP},
+    models::{Policy, Sampler, StateValue, MDP},
 };
 
 /// # Policy Evaluation
