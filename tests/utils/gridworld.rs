@@ -9,6 +9,11 @@ pub static TOP_LEFT: GridworldState = GridworldState::new(0, 0);
 pub static TOP_RIGHT: GridworldState = GridworldState::new(0, 1);
 pub static BOTTOM_RIGHT: GridworldState = GridworldState::new(1, 1);
 
+pub static LEFT: GridworldAction = GridworldAction::Left;
+pub static RIGHT: GridworldAction = GridworldAction::Right;
+pub static UP: GridworldAction = GridworldAction::Up;
+pub static DOWN: GridworldAction = GridworldAction::Down;
+
 // State
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct GridworldState {
@@ -130,7 +135,7 @@ mod tests {
     fn transition_to_boundaries() {
         let mdp = get_test_mdp();
         assert_eq!(
-            mdp.transition(&TOP_LEFT, &GridworldAction::Left),
+            mdp.transition(&TOP_LEFT, &LEFT),
             (GridworldState::new(0, 0), NO_OP_TRANSITION_REWARD)
         );
     }
@@ -140,7 +145,7 @@ mod tests {
     fn transition_to_air() {
         let mdp = get_test_mdp();
         assert_eq!(
-            mdp.transition(&TOP_LEFT, &GridworldAction::Right),
+            mdp.transition(&TOP_LEFT, &RIGHT),
             (GridworldState::new(0, 1), NO_OP_TRANSITION_REWARD)
         );
     }
@@ -150,7 +155,7 @@ mod tests {
     fn transition_to_wall() {
         let mdp = get_test_mdp();
         assert_eq!(
-            mdp.transition(&TOP_LEFT, &GridworldAction::Down),
+            mdp.transition(&TOP_LEFT, &DOWN),
             (GridworldState::new(0, 0), NO_OP_TRANSITION_REWARD)
         );
     }
@@ -160,7 +165,7 @@ mod tests {
     fn transition_to_end() {
         let mdp = get_test_mdp();
         assert_eq!(
-            mdp.transition(&TOP_RIGHT, &GridworldAction::Down),
+            mdp.transition(&TOP_RIGHT, &DOWN),
             (GridworldState::new(1, 1), END_TRANSITION_REWARD)
         );
     }
@@ -170,7 +175,7 @@ mod tests {
     fn transition_from_terminal() {
         let mdp = get_test_mdp();
         assert_eq!(
-            mdp.transition(&BOTTOM_RIGHT, &GridworldAction::Up),
+            mdp.transition(&BOTTOM_RIGHT, &UP),
             (GridworldState::new(1, 1), 0.0)
         );
     }
