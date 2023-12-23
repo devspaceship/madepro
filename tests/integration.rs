@@ -31,7 +31,8 @@ fn test_policy_inference() {
 fn test_policy_iteration() {
     let mdp = get_test_mdp();
     let config = get_test_config();
-    let (state_value, policy) = policy_iteration(&mdp, &config);
+    let state_value = policy_iteration(&mdp, &config);
+    let policy = infer_policy(&mdp, &config, &state_value);
     assert_state_value_correct(&state_value);
     assert_policy_optimal(&policy);
 }
@@ -40,7 +41,8 @@ fn test_policy_iteration() {
 fn test_value_iteration() {
     let mdp = get_test_mdp();
     let config = get_test_config().iterations_before_improvement(Some(3));
-    let (state_value, policy) = value_iteration(&mdp, &config);
+    let state_value = value_iteration(&mdp, &config);
+    let policy = infer_policy(&mdp, &config, &state_value);
     assert_state_value_correct(&state_value);
     assert_policy_optimal(&policy);
 }

@@ -57,3 +57,9 @@ impl Config {
         self
     }
 }
+
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
+    }
+}

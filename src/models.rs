@@ -3,11 +3,12 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::hash::Hash;
 
-/// # Model
+/// # Collection
 ///
-/// This trait represents a model in the MDP.\
-/// `State` and `Action` extend this trait.
-pub trait Sampler: Copy + Eq + Hash + Debug {
+/// This trait represents shared functionality of `State` and `Action`.\
+/// Namely the ability to iterate over the items.\
+/// A default implementation is given for stochastic sampling.
+pub trait Collection: Copy + Eq + Hash + Debug {
     type IntoIter: IntoIterator<Item = Self>;
 
     /// Returns an iterator over all items.
@@ -24,13 +25,13 @@ pub trait Sampler: Copy + Eq + Hash + Debug {
 ///
 /// This trait represents a state in the MDP.\
 /// You can implement it on a custom struct for instance.
-pub trait State: Sampler {}
+pub trait State: Collection {}
 
 /// # Action
 ///
 /// An action type must implement this trait.\
 /// You can implement it on a custom enum for instance.
-pub trait Action: Sampler {}
+pub trait Action: Collection {}
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Policy<S, A>(HashMap<S, A>)
@@ -56,6 +57,12 @@ impl<S: State, A: Action> Policy<S, A> {
     }
 }
 
+impl<S: State, A: Action> Default for Policy<S, A> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug)]
 pub struct StateValue<S>(HashMap<S, f64>)
 where
@@ -76,6 +83,12 @@ impl<S: State> StateValue<S> {
 
     pub fn insert(&mut self, state: &S, value: f64) {
         self.0.insert(*state, value);
+    }
+}
+
+impl<S: State> Default for StateValue<S> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -125,6 +138,12 @@ impl<A: Action> StateActionValue<A> {
     }
 }
 
+impl<A: Action> Default for StateActionValue<A> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug)]
 pub struct ActionValue<S, A>(HashMap<S, StateActionValue<A>>)
 where
@@ -145,7 +164,7 @@ impl<S: State, A: Action> ActionValue<S, A> {
     }
 
     pub fn insert(&mut self, state: &S, action: &A, value: f64) {
-        self.0.get_mut(&state).unwrap().insert(action, value);
+        self.0.get_mut(state).unwrap().insert(action, value);
     }
 
     pub fn greedy(&self, state: &S) -> A {
@@ -162,6 +181,12 @@ impl<S: State, A: Action> ActionValue<S, A> {
             policy.insert(&state, &self.greedy(&state));
         }
         policy
+    }
+}
+
+impl<S: State, A: Action> Default for ActionValue<S, A> {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

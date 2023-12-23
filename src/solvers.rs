@@ -1,13 +1,10 @@
 use crate::{
     config::Config,
-    models::{ActionValue, Policy, Sampler, StateValue, MDP},
+    models::{ActionValue, Collection, Policy, StateValue, MDP},
     utils::{infer_policy, policy_evaluation},
 };
 
-fn policy_value_iteration<M>(
-    mdp: &M,
-    config: &Config,
-) -> (StateValue<M::State>, Policy<M::State, M::Action>)
+fn policy_value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
@@ -21,13 +18,10 @@ where
         }
         policy = new_policy;
     }
-    (state_value, policy)
+    state_value
 }
 
-pub fn policy_iteration<M>(
-    mdp: &M,
-    config: &Config,
-) -> (StateValue<M::State>, Policy<M::State, M::Action>)
+pub fn policy_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
@@ -38,10 +32,7 @@ where
     policy_value_iteration(mdp, config)
 }
 
-pub fn value_iteration<M>(
-    mdp: &M,
-    config: &Config,
-) -> (StateValue<M::State>, Policy<M::State, M::Action>)
+pub fn value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
