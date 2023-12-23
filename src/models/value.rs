@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-
 use super::{
     mdp::{Action, State},
     policy::Policy,
 };
+
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct StateValue<S>(HashMap<S, f64>)

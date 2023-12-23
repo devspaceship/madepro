@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-
 use super::mdp::{Action, State};
+
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Policy<S, A>(HashMap<S, A>)
