@@ -2,7 +2,11 @@ use std::vec;
 
 use madepro::{
     config::Config,
-    models::{Action, Collection, Policy, State, StateValue, MDP},
+    models::{
+        mdp::{Action, Collection, State, MDP},
+        policy::Policy,
+        value::StateValue,
+    },
 };
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;

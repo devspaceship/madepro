@@ -1,6 +1,10 @@
 use crate::{
     config::Config,
-    models::{ActionValue, Collection, Policy, StateValue, MDP},
+    models::{
+        mdp::{Collection, MDP},
+        policy::Policy,
+        value::{ActionValue, StateValue},
+    },
     utils::{infer_policy, policy_evaluation},
 };
 
