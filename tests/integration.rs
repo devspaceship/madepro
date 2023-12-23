@@ -4,12 +4,9 @@ use utils::{
     get_test_mdp, get_test_state_value,
 };
 
-use madepro::{
-    solvers::{
-        dp::{policy_iteration, value_iteration},
-        td::{q_learning, sarsa},
-    },
-    utils::{infer_policy, policy_evaluation},
+use madepro::solvers::{
+    dp::{infer_policy, policy_evaluation, policy_iteration, value_iteration},
+    td::{q_learning, sarsa},
 };
 
 #[test]
