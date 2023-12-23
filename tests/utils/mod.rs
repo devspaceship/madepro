@@ -156,6 +156,7 @@ pub fn get_test_config() -> Config {
     Config::new()
         .discount_factor(0.97)
         .iterations_before_improvement(None)
+        .exploration_rate(0.1)
 }
 
 pub fn get_test_state_value() -> StateValue<GridworldState> {

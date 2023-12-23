@@ -79,6 +79,7 @@ impl<S: State> StateValue<S> {
     }
 }
 
+#[derive(Debug)]
 pub struct StateActionValue<A>(HashMap<A, f64>)
 where
     A: Action;
@@ -124,6 +125,7 @@ impl<A: Action> StateActionValue<A> {
     }
 }
 
+#[derive(Debug)]
 pub struct ActionValue<S, A>(HashMap<S, StateActionValue<A>>)
 where
     S: State,
