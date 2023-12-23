@@ -5,7 +5,10 @@ use utils::{
 };
 
 use madepro::{
-    solvers::{policy_iteration, q_learning, sarsa, value_iteration},
+    solvers::{
+        dp::{policy_iteration, value_iteration},
+        td::{q_learning, sarsa},
+    },
     utils::{infer_policy, policy_evaluation},
 };
 
