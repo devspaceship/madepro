@@ -153,6 +153,14 @@ impl<S: State, A: Action> ActionValue<S, A> {
     pub fn epsilon_greedy(&self, state: &S, epsilon: f64) -> A {
         self.0.get(state).unwrap().epsilon_greedy(epsilon)
     }
+
+    pub fn greedy_policy(&self) -> Policy<S, A> {
+        let mut policy = Policy::new();
+        for state in S::get_all() {
+            policy.insert(&state, &self.greedy(&state));
+        }
+        policy
+    }
 }
 
 /// # MDP
