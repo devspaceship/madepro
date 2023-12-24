@@ -35,13 +35,9 @@ where
 }
 
 #[derive(Debug)]
-pub struct StateActionValue<'a, A>
+pub struct StateActionValue<'a, A>(HashMap<&'a A, f64>)
 where
-    A: Action,
-{
-    actions: &'a Sampler<A>,
-    map: HashMap<&'a A, f64>,
-}
+    A: Action;
 
 impl<'a, A> StateActionValue<'a, A>
 where
@@ -52,20 +48,20 @@ where
         for action in actions {
             map.insert(action, 0.0);
         }
-        Self { actions, map }
+        Self(map)
     }
 
     pub fn get(&self, action: &A) -> f64 {
-        *self.map.get(action).unwrap()
+        *self.0.get(action).unwrap()
     }
 
     pub fn insert(&mut self, action: &'a A, value: f64) {
-        self.map.insert(action, value);
+        self.0.insert(action, value);
     }
 
-    pub fn greedy(&self) -> &A {
+    pub fn greedy(&self, actions: &'a Sampler<A>) -> &'a A {
         let (best_action, _) = self
-            .map
+            .0
             .iter()
             .reduce(|(best_action, best_value), (action, value)| {
                 if value > best_value {
@@ -78,11 +74,11 @@ where
         *best_action
     }
 
-    pub fn epsilon_greedy(&self, epsilon: f64) -> &A {
+    pub fn epsilon_greedy(&self, actions: &'a Sampler<A>, epsilon: f64) -> &'a A {
         if random::<f64>() < epsilon {
-            self.actions.get_random()
+            actions.get_random()
         } else {
-            self.greedy()
+            self.greedy(actions)
         }
     }
 }
@@ -93,26 +89,18 @@ where
 {
     fn clone(&self) -> Self {
         let mut map = HashMap::new();
-        for (action, value) in &self.map {
-            map.insert(*action, *value);
+        for (&action, &value) in &self.0 {
+            map.insert(action, value);
         }
-        Self {
-            actions: self.actions,
-            map,
-        }
+        Self(map)
     }
 }
 
 #[derive(Debug)]
-pub struct ActionValue<'a, S, A>
+pub struct ActionValue<'a, S, A>(HashMap<&'a S, StateActionValue<'a, A>>)
 where
     S: State,
-    A: Action,
-{
-    states: &'a Sampler<S>,
-    actions: &'a Sampler<A>,
-    map: HashMap<&'a S, StateActionValue<'a, A>>,
-}
+    A: Action;
 
 impl<'a, S, A> ActionValue<'a, S, A>
 where
@@ -124,33 +112,33 @@ where
         for state in states {
             map.insert(state, StateActionValue::new(actions));
         }
-        Self {
-            states,
-            actions,
-            map,
-        }
+        Self(map)
     }
 
     pub fn get(&self, state: &S, action: &A) -> f64 {
-        self.map.get(state).unwrap().get(action)
+        self.0.get(state).unwrap().get(action)
     }
 
     pub fn insert(&mut self, state: &'a S, action: &'a A, value: f64) {
-        self.map.get_mut(state).unwrap().insert(action, value);
+        self.0.get_mut(state).unwrap().insert(action, value);
     }
 
-    pub fn greedy(&self, state: &S) -> &A {
-        self.map.get(state).unwrap().greedy()
+    pub fn greedy(&self, actions: &'a Sampler<A>, state: &S) -> &'a A {
+        self.0.get(state).unwrap().greedy(actions)
     }
 
-    pub fn epsilon_greedy(&self, state: &S, epsilon: f64) -> &A {
-        self.map.get(state).unwrap().epsilon_greedy(epsilon)
+    pub fn epsilon_greedy(&self, actions: &'a Sampler<A>, state: &S, epsilon: f64) -> &'a A {
+        self.0.get(state).unwrap().epsilon_greedy(actions, epsilon)
     }
 
-    pub fn greedy_policy(&self) -> Policy<'_, S, A> {
-        let mut policy = Policy::new(self.states, self.actions);
-        for state in self.states {
-            policy.insert(state, self.greedy(&state));
+    pub fn greedy_policy(
+        &self,
+        states: &'a Sampler<S>,
+        actions: &'a Sampler<A>,
+    ) -> Policy<'a, S, A> {
+        let mut policy = Policy::new(states, actions);
+        for state in states {
+            policy.insert(state, self.greedy(actions, state));
         }
         policy
     }
@@ -163,13 +151,9 @@ where
 {
     fn clone(&self) -> Self {
         let mut map = HashMap::new();
-        for (state, state_action_value) in &self.map {
-            map.insert(*state, state_action_value.clone());
+        for (&state, state_action_value) in &self.0 {
+            map.insert(state, state_action_value.clone());
         }
-        Self {
-            states: self.states,
-            actions: self.actions,
-            map,
-        }
+        Self(map)
     }
 }
