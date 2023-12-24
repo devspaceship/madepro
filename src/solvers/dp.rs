@@ -1,10 +1,6 @@
 use crate::{
     config::Config,
-    models::{
-        mdp::{Collection, MDP},
-        policy::Policy,
-        value::StateValue,
-    },
+    models::{mdp::MDP, policy::Policy, value::StateValue},
 };
 
 /// # Policy Evaluation
@@ -14,27 +10,28 @@ use crate::{
 /// The algorithm stops when the state values converge.
 /// If the `iterations_before_improvement` parameter is set,
 /// the algorithm will stop early after the given number of iterations.
-pub fn policy_evaluation<M>(
+pub fn policy_evaluation<'s, M>(
     mdp: &M,
     config: &Config,
     policy: &Policy<M::State, M::Action>,
     initial_state_value: Option<StateValue<M::State>>,
-) -> StateValue<M::State>
+) -> StateValue<'s, M::State>
 where
     M: MDP,
 {
-    let mut state_value = initial_state_value.unwrap_or_default();
+    let states = mdp.get_states();
+    let mut state_value = initial_state_value.unwrap_or(StateValue::new(states));
     let mut iteration = 0;
     loop {
         iteration += 1;
         let mut delta: f64 = 0.0;
-        for state in M::State::get_all() {
-            let action = policy.get(&state);
-            let (next_state, reward) = mdp.transition(&state, action);
-            let next_state_value = state_value.get(&next_state);
+        for state in states {
+            let action = policy.get(state);
+            let (next_state, reward) = mdp.transition(state, action);
+            let next_state_value = state_value.get(next_state);
             let new_state_value = reward + config.discount_factor * next_state_value;
             delta = delta.max((new_state_value - state_value.get(&state)).abs());
-            state_value.insert(&state, new_state_value);
+            state_value.insert(state, new_state_value);
         }
         if delta < 1e-5
             || config
@@ -50,19 +47,21 @@ where
 /// # Policy Inference
 ///
 /// Given a state value function, this function infers the optimal policy.
-pub fn infer_policy<M>(
+pub fn infer_policy<'s, 'a, M>(
     mdp: &M,
     config: &Config,
     state_value: &StateValue<M::State>,
-) -> Policy<M::State, M::Action>
+) -> Policy<'s, 'a, M::State, M::Action>
 where
     M: MDP,
 {
-    let mut policy = Policy::new();
-    for state in M::State::get_all() {
+    let states = mdp.get_states();
+    let actions = mdp.get_actions();
+    let mut policy = Policy::new(states, actions);
+    for state in states {
         let mut best_action = None;
         let mut best_value = None;
-        for action in M::Action::get_all() {
+        for action in actions {
             let (next_state, reward) = mdp.transition(&state, &action);
             let value = reward + config.discount_factor * state_value.get(&next_state);
             if best_value.is_none() || value > best_value.unwrap() {
@@ -77,12 +76,14 @@ where
     policy
 }
 
-fn policy_value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
+fn policy_value_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
 where
     M: MDP,
 {
-    let mut state_value = StateValue::new();
-    let mut policy = Policy::new();
+    let states = mdp.get_states();
+    let actions = mdp.get_actions();
+    let mut state_value = StateValue::new(states);
+    let mut policy = Policy::new(states, actions);
     loop {
         state_value = policy_evaluation(mdp, config, &policy, Some(state_value));
         let new_policy = infer_policy(mdp, config, &state_value);
@@ -94,7 +95,7 @@ where
     state_value
 }
 
-pub fn policy_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
+pub fn policy_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
 where
     M: MDP,
 {
@@ -105,7 +106,7 @@ where
     policy_value_iteration(mdp, config)
 }
 
-pub fn value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
+pub fn value_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
 where
     M: MDP,
 {

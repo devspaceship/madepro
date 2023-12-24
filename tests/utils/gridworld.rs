@@ -1,6 +1,6 @@
 use std::vec;
 
-use madepro::models::mdp::{Action, Collection, State, MDP};
+use madepro::models::mdp::{Action, Sampler, State, MDP};
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;
 const END_TRANSITION_REWARD: f64 = 100.0;
@@ -27,7 +27,7 @@ impl GridworldState {
     }
 }
 
-impl Collection for GridworldState {
+impl Sampler for GridworldState {
     type IntoIter = vec::IntoIter<Self>;
 
     fn get_all() -> Self::IntoIter {
@@ -46,7 +46,7 @@ pub enum GridworldAction {
     Up,
 }
 
-impl Collection for GridworldAction {
+impl Sampler for GridworldAction {
     type IntoIter = vec::IntoIter<Self>;
 
     fn get_all() -> Self::IntoIter {
