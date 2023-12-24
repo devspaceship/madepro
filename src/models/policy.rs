@@ -1,18 +1,25 @@
-use super::mdp::{Action, State};
-
 use std::collections::HashMap;
 
+use super::{
+    mdp::{Action, State},
+    Sampler,
+};
+
 #[derive(Debug, PartialEq, Eq)]
-pub struct Policy<S, A>(HashMap<S, A>)
+pub struct Policy<'s, 'a, S, A>(HashMap<&'s S, &'a A>)
 where
     S: State,
     A: Action;
 
-impl<S: State, A: Action> Policy<S, A> {
-    pub fn new() -> Self {
+impl<S, A> Policy<'_, '_, S, A>
+where
+    S: State,
+    A: Action,
+{
+    pub fn new(states: &Sampler<S>, actions: &Sampler<A>) -> Self {
         let mut map = HashMap::new();
-        for state in S::get_all() {
-            map.insert(state, A::get_random());
+        for state in states {
+            map.insert(state, actions.get_random());
         }
         Self(map)
     }
@@ -22,12 +29,6 @@ impl<S: State, A: Action> Policy<S, A> {
     }
 
     pub fn insert(&mut self, state: &S, action: &A) {
-        self.0.insert(*state, *action);
-    }
-}
-
-impl<S: State, A: Action> Default for Policy<S, A> {
-    fn default() -> Self {
-        Self::new()
+        self.0.insert(state, action);
     }
 }
