@@ -59,7 +59,7 @@ where
         self.0.insert(action, value);
     }
 
-    pub fn greedy(&self, actions: &'a Sampler<A>) -> &'a A {
+    pub fn greedy(&self, _actions: &'a Sampler<A>) -> &'a A {
         let (best_action, _) = self
             .0
             .iter()
@@ -71,7 +71,7 @@ where
                 }
             })
             .unwrap();
-        *best_action
+        best_action
     }
 
     pub fn epsilon_greedy(&self, actions: &'a Sampler<A>, epsilon: f64) -> &'a A {

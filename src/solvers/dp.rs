@@ -63,8 +63,8 @@ where
         let mut best_action = None;
         let mut best_value = None;
         for action in actions {
-            let (next_state, reward) = mdp.transition(&state, &action);
-            let value = reward + config.discount_factor * state_value.get(&next_state);
+            let (next_state, reward) = mdp.transition(state, action);
+            let value = reward + config.discount_factor * state_value.get(next_state);
             if best_value.is_none() || value > best_value.unwrap() {
                 best_value = Some(value);
                 best_action = Some(action);

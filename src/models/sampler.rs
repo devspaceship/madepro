@@ -7,7 +7,7 @@ pub struct Sampler<T>(Vec<T>);
 
 impl<T> Sampler<T> {
     pub fn new(items: Vec<T>) -> Self {
-        assert!(items.len() > 0, "Sampler must contain at least one item.");
+        assert!(!items.is_empty(), "Sampler must contain at least one item.");
         Self(items)
     }
 
