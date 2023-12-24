@@ -2,8 +2,42 @@ use std::hash::Hash;
 
 use super::Sampler;
 
+/// # State
+///
+/// You have to implement this trait for your own state type.\
+/// It ensures that your state type can be used as a key in a HashMap.
+///
+/// ## Example
+///
+/// ```
+/// #[derive(PartialEq, Eq, Hash)]
+/// struct MyState {
+///     x: u32,
+///     y: u32,
+/// }
+///
+/// impl State for MyState {}
+/// ```
 pub trait State: Eq + Hash {}
 
+/// # Action
+///
+/// You have to implement this trait for your own action type.\
+/// It ensures that your action type can be used as a key in a HashMap.
+///
+/// ## Example
+///
+/// ```
+/// #[derive(PartialEq, Eq, Hash)]
+/// enum MyAction {
+///     Up,
+///     Down,
+///     Left,
+///     Right,
+/// }
+///
+/// impl Action for MyAction {}
+/// ```
 pub trait Action: Eq + Hash {}
 
 /// # Markov Decision Process

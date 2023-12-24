@@ -6,17 +6,17 @@ use super::{
 };
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Policy<'s, 'a, S, A>(HashMap<&'s S, &'a A>)
+pub struct Policy<'a, S, A>(HashMap<&'a S, &'a A>)
 where
     S: State,
     A: Action;
 
-impl<S, A> Policy<'_, '_, S, A>
+impl<'a, S, A> Policy<'a, S, A>
 where
     S: State,
     A: Action,
 {
-    pub fn new(states: &Sampler<S>, actions: &Sampler<A>) -> Self {
+    pub fn new(states: &'a Sampler<S>, actions: &'a Sampler<A>) -> Self {
         let mut map = HashMap::new();
         for state in states {
             map.insert(state, actions.get_random());
@@ -28,7 +28,7 @@ where
         self.0.get(state).unwrap()
     }
 
-    pub fn insert(&mut self, state: &S, action: &A) {
+    pub fn insert(&mut self, state: &'a S, action: &'a A) {
         self.0.insert(state, action);
     }
 }
