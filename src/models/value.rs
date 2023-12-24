@@ -87,6 +87,22 @@ where
     }
 }
 
+impl<A> Clone for StateActionValue<'_, A>
+where
+    A: Action,
+{
+    fn clone(&self) -> Self {
+        let mut map = HashMap::new();
+        for (action, value) in &self.map {
+            map.insert(*action, *value);
+        }
+        Self {
+            actions: self.actions,
+            map,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct ActionValue<'a, S, A>
 where
@@ -137,5 +153,23 @@ where
             policy.insert(state, self.greedy(&state));
         }
         policy
+    }
+}
+
+impl<S, A> Clone for ActionValue<'_, S, A>
+where
+    S: State,
+    A: Action,
+{
+    fn clone(&self) -> Self {
+        let mut map = HashMap::new();
+        for (state, state_action_value) in &self.map {
+            map.insert(*state, state_action_value.clone());
+        }
+        Self {
+            states: self.states,
+            actions: self.actions,
+            map,
+        }
     }
 }

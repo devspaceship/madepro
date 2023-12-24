@@ -5,7 +5,7 @@ use utils::{
 };
 
 use madepro::solvers::{
-    dp::{infer_policy, policy_evaluation, policy_iteration, value_iteration},
+    dp::{policy_evaluation, policy_improvement, policy_iteration, value_iteration},
     td::{q_learning, sarsa},
 };
 
@@ -23,7 +23,7 @@ fn test_policy_inference() {
     let mdp = get_test_mdp();
     let config = get_test_config();
     let state_value = get_test_state_value();
-    let inferred_policy = infer_policy(&mdp, &config, &state_value);
+    let inferred_policy = policy_improvement(&mdp, &config, &state_value);
     assert_policy_optimal(&inferred_policy);
 }
 
@@ -32,7 +32,7 @@ fn test_policy_iteration() {
     let mdp = get_test_mdp();
     let config = get_test_config();
     let state_value = policy_iteration(&mdp, &config);
-    let policy = infer_policy(&mdp, &config, &state_value);
+    let policy = policy_improvement(&mdp, &config, &state_value);
     assert_state_value_correct(&state_value);
     assert_policy_optimal(&policy);
 }
@@ -42,7 +42,7 @@ fn test_value_iteration() {
     let mdp = get_test_mdp();
     let config = get_test_config().iterations_before_improvement(Some(3));
     let state_value = value_iteration(&mdp, &config);
-    let policy = infer_policy(&mdp, &config, &state_value);
+    let policy = policy_improvement(&mdp, &config, &state_value);
     assert_state_value_correct(&state_value);
     assert_policy_optimal(&policy);
 }

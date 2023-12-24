@@ -5,17 +5,17 @@ use crate::{
 
 /// # Policy Evaluation
 ///
-/// This function implements the policy evaluation algorithm.\
-/// It works by using the Bellman equation to iteratively update the state values.
-/// The algorithm stops when the state values converge.
+/// This function implements the policy evaluation algorithm.
+/// It works by using the Bellman equation to iteratively update the state value.
+/// The algorithm stops when the state value converge.
 /// If the `iterations_before_improvement` parameter is set,
 /// the algorithm will stop early after the given number of iterations.
-pub fn policy_evaluation<'s, M>(
-    mdp: &M,
+pub fn policy_evaluation<'a, M>(
+    mdp: &'a M,
     config: &Config,
-    policy: &Policy<M::State, M::Action>,
-    initial_state_value: Option<StateValue<M::State>>,
-) -> StateValue<'s, M::State>
+    policy: &Policy<'a, M::State, M::Action>,
+    initial_state_value: Option<StateValue<'a, M::State>>,
+) -> StateValue<'a, M::State>
 where
     M: MDP,
 {
@@ -30,7 +30,7 @@ where
             let (next_state, reward) = mdp.transition(state, action);
             let next_state_value = state_value.get(next_state);
             let new_state_value = reward + config.discount_factor * next_state_value;
-            delta = delta.max((new_state_value - state_value.get(&state)).abs());
+            delta = delta.max((new_state_value - state_value.get(state)).abs());
             state_value.insert(state, new_state_value);
         }
         if delta < 1e-5
@@ -44,14 +44,15 @@ where
     state_value
 }
 
-/// # Policy Inference
+/// # Policy Improvement
 ///
-/// Given a state value function, this function infers the optimal policy.
-pub fn infer_policy<'s, 'a, M>(
-    mdp: &M,
+/// Given an MDP, a discount factor and a state value,
+/// this function computes the optimal policy.
+pub fn policy_improvement<'a, M>(
+    mdp: &'a M,
     config: &Config,
     state_value: &StateValue<M::State>,
-) -> Policy<'s, 'a, M::State, M::Action>
+) -> Policy<'a, M::State, M::Action>
 where
     M: MDP,
 {
@@ -69,14 +70,12 @@ where
                 best_action = Some(action);
             }
         }
-        if let Some(best_action) = best_action {
-            policy.insert(&state, &best_action);
-        }
+        policy.insert(state, best_action.unwrap());
     }
     policy
 }
 
-fn policy_value_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
+fn policy_value_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
 where
     M: MDP,
 {
@@ -86,7 +85,7 @@ where
     let mut policy = Policy::new(states, actions);
     loop {
         state_value = policy_evaluation(mdp, config, &policy, Some(state_value));
-        let new_policy = infer_policy(mdp, config, &state_value);
+        let new_policy = policy_improvement(mdp, config, &state_value);
         if new_policy == policy {
             break;
         }
@@ -95,7 +94,7 @@ where
     state_value
 }
 
-pub fn policy_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
+pub fn policy_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
 where
     M: MDP,
 {
@@ -106,7 +105,7 @@ where
     policy_value_iteration(mdp, config)
 }
 
-pub fn value_iteration<'s, M>(mdp: &M, config: &Config) -> StateValue<'s, M::State>
+pub fn value_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
 where
     M: MDP,
 {
