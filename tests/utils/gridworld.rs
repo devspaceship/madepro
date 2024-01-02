@@ -1,6 +1,7 @@
-use std::vec;
-
-use madepro::models::mdp::{Action, Sampler, State, MDP};
+use madepro::models::{
+    mdp::{Action, State, MDP},
+    Sampler,
+};
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;
 const END_TRANSITION_REWARD: f64 = 100.0;
@@ -14,8 +15,33 @@ pub static RIGHT: GridworldAction = GridworldAction::Right;
 pub static UP: GridworldAction = GridworldAction::Up;
 pub static DOWN: GridworldAction = GridworldAction::Down;
 
+pub fn get_states() -> Vec<GridworldState> {
+    vec![
+        GridworldState::new(0, 0),
+        GridworldState::new(0, 1),
+        GridworldState::new(1, 1),
+    ]
+}
+
+pub fn get_actions() -> Vec<GridworldAction> {
+    vec![
+        GridworldAction::Down,
+        GridworldAction::Left,
+        GridworldAction::Right,
+        GridworldAction::Up,
+    ]
+}
+
+pub fn get_state_sampler() -> Sampler<GridworldState> {
+    get_states().into()
+}
+
+pub fn get_action_sampler() -> Sampler<GridworldAction> {
+    get_actions().into()
+}
+
 // State
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug)]
 pub struct GridworldState {
     i: usize,
     j: usize,
@@ -27,31 +53,15 @@ impl GridworldState {
     }
 }
 
-impl Sampler for GridworldState {
-    type IntoIter = vec::IntoIter<Self>;
-
-    fn get_all() -> Self::IntoIter {
-        vec![Self::new(0, 0), Self::new(0, 1), Self::new(1, 1)].into_iter()
-    }
-}
-
 impl State for GridworldState {}
 
 // Action
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug)]
 pub enum GridworldAction {
     Down,
     Left,
     Right,
     Up,
-}
-
-impl Sampler for GridworldAction {
-    type IntoIter = vec::IntoIter<Self>;
-
-    fn get_all() -> Self::IntoIter {
-        vec![Self::Down, Self::Left, Self::Right, Self::Up].into_iter()
-    }
 }
 
 impl Action for GridworldAction {}
@@ -67,11 +77,21 @@ pub enum Cell {
 // Gridworld
 pub struct Gridworld {
     cell_grid: Vec<Vec<Cell>>,
+    states: Sampler<GridworldState>,
+    actions: Sampler<GridworldAction>,
 }
 
 impl Gridworld {
-    pub fn new(cell_grid: Vec<Vec<Cell>>) -> Self {
-        Self { cell_grid }
+    pub fn new(
+        cell_grid: Vec<Vec<Cell>>,
+        states: Vec<GridworldState>,
+        actions: Vec<GridworldAction>,
+    ) -> Self {
+        Self {
+            cell_grid,
+            states: states.into(),
+            actions: actions.into(),
+        }
     }
 
     fn get_grid_size(&self) -> (usize, usize) {
@@ -83,18 +103,26 @@ impl MDP for Gridworld {
     type State = GridworldState;
     type Action = GridworldAction;
 
+    fn get_states(&self) -> &Sampler<Self::State> {
+        &self.states
+    }
+
+    fn get_actions(&self) -> &Sampler<Self::Action> {
+        &self.actions
+    }
+
     fn is_state_terminal(&self, state: &Self::State) -> bool {
         let cell = &self.cell_grid[state.i][state.j];
         *cell == Cell::End
     }
 
-    fn transition(&self, state: &Self::State, action: &Self::Action) -> (Self::State, f64) {
+    fn transition(&self, state: &Self::State, action: &Self::Action) -> (&Self::State, f64) {
         let cell = &self.cell_grid[state.i][state.j];
 
         // Edge cases
         // In theory the Cell::Wall case should never happen
         if (*cell) == Cell::End || (*cell) == Cell::Wall {
-            return (*state, 0.0);
+            return (state, 0.0);
         }
 
         // Tentative position
@@ -110,16 +138,16 @@ impl MDP for Gridworld {
         let (n, m) = self.get_grid_size();
         let (n, m) = (n as i32, m as i32);
         if i_ < 0 || i_ >= n || j_ < 0 || j_ >= m {
-            return (*state, NO_OP_TRANSITION_REWARD);
+            return (state, NO_OP_TRANSITION_REWARD);
         }
 
         // Result
         let (i_, j_) = (i_ as usize, j_ as usize);
         let cell_ = &self.cell_grid[i_][j_];
         match cell_ {
-            Cell::Air => (Self::State::new(i_, j_), NO_OP_TRANSITION_REWARD),
-            Cell::Wall => (*state, NO_OP_TRANSITION_REWARD),
-            Cell::End => (Self::State::new(i_, j_), END_TRANSITION_REWARD),
+            Cell::Air => (&Self::State::new(i_, j_), NO_OP_TRANSITION_REWARD),
+            Cell::Wall => (state, NO_OP_TRANSITION_REWARD),
+            Cell::End => (&Self::State::new(i_, j_), END_TRANSITION_REWARD),
         }
     }
 }
@@ -136,7 +164,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &LEFT),
-            (GridworldState::new(0, 0), NO_OP_TRANSITION_REWARD)
+            (&TOP_LEFT, NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -146,7 +174,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &RIGHT),
-            (GridworldState::new(0, 1), NO_OP_TRANSITION_REWARD)
+            (&TOP_RIGHT, NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -156,7 +184,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &DOWN),
-            (GridworldState::new(0, 0), NO_OP_TRANSITION_REWARD)
+            (&TOP_LEFT, NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -166,7 +194,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_RIGHT, &DOWN),
-            (GridworldState::new(1, 1), END_TRANSITION_REWARD)
+            (&BOTTOM_RIGHT, END_TRANSITION_REWARD)
         );
     }
 
@@ -174,9 +202,6 @@ mod tests {
     #[ignore = "meta test"]
     fn transition_from_terminal() {
         let mdp = get_test_mdp();
-        assert_eq!(
-            mdp.transition(&BOTTOM_RIGHT, &UP),
-            (GridworldState::new(1, 1), 0.0)
-        );
+        assert_eq!(mdp.transition(&BOTTOM_RIGHT, &UP), (&BOTTOM_RIGHT, 0.0));
     }
 }

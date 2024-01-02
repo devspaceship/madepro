@@ -4,16 +4,19 @@ use utils::{
     get_test_mdp, get_test_state_value,
 };
 
-use madepro::solvers::{
-    dp::{policy_evaluation, policy_improvement, policy_iteration, value_iteration},
-    td::{q_learning, sarsa},
+use madepro::{
+    models::mdp::MDP,
+    solvers::{
+        dp::{policy_evaluation, policy_improvement, policy_iteration, value_iteration},
+        td::{q_learning, sarsa},
+    },
 };
 
 #[test]
 fn test_policy_evaluation() {
     let mdp = get_test_mdp();
     let config = get_test_config();
-    let policy = get_optimal_policy();
+    let policy = get_optimal_policy(mdp.get_states(), mdp.get_actions());
     let state_value = policy_evaluation(&mdp, &config, &policy, None);
     assert_state_value_correct(&state_value);
 }
@@ -22,7 +25,7 @@ fn test_policy_evaluation() {
 fn test_policy_inference() {
     let mdp = get_test_mdp();
     let config = get_test_config();
-    let state_value = get_test_state_value();
+    let state_value = get_test_state_value(mdp.get_states());
     let inferred_policy = policy_improvement(&mdp, &config, &state_value);
     assert_policy_optimal(&inferred_policy);
 }
@@ -52,7 +55,7 @@ fn test_sarsa() {
     let mdp = get_test_mdp();
     let config = get_test_config();
     let action_value = sarsa(&mdp, &config);
-    let policy = action_value.greedy_policy();
+    let policy = action_value.greedy_policy(mdp.get_states(), mdp.get_actions());
     assert_policy_optimal(&policy);
 }
 
@@ -61,6 +64,6 @@ fn test_q_learning() {
     let mdp = get_test_mdp();
     let config = get_test_config();
     let action_value = q_learning(&mdp, &config);
-    let policy = action_value.greedy_policy();
+    let policy = action_value.greedy_policy(mdp.get_states(), mdp.get_actions());
     assert_policy_optimal(&policy);
 }

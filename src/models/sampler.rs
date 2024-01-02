@@ -29,3 +29,9 @@ impl<'a, T> IntoIterator for &'a Sampler<T> {
         self.iter()
     }
 }
+
+impl<T> From<Vec<T>> for Sampler<T> {
+    fn from(items: Vec<T>) -> Self {
+        Self::new(items)
+    }
+}

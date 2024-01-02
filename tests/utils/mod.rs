@@ -1,17 +1,18 @@
-use madepro::{
-    config::Config,
-    models::{policy::Policy, value::StateValue},
-};
-use std::vec;
-
 mod gridworld;
 use gridworld::*;
 
+use madepro::{
+    config::Config,
+    models::{policy::Policy, value::StateValue, Sampler},
+};
+use std::vec;
+
 pub fn get_test_mdp() -> Gridworld {
-    Gridworld::new(vec![
-        vec![Cell::Air, Cell::Air],
-        vec![Cell::Wall, Cell::End],
-    ])
+    Gridworld::new(
+        vec![vec![Cell::Air, Cell::Air], vec![Cell::Wall, Cell::End]],
+        get_states(),
+        get_actions(),
+    )
 }
 
 pub fn get_test_config() -> Config {
@@ -21,16 +22,19 @@ pub fn get_test_config() -> Config {
         .exploration_rate(0.1)
 }
 
-pub fn get_optimal_policy() -> Policy<GridworldState, GridworldAction> {
-    let mut policy = Policy::new();
+pub fn get_optimal_policy<'a>(
+    states: &'a Sampler<GridworldState>,
+    actions: &'a Sampler<GridworldAction>,
+) -> Policy<'a, GridworldState, GridworldAction> {
+    let mut policy = Policy::new(states, actions);
     policy.insert(&TOP_LEFT, &RIGHT);
     policy.insert(&TOP_RIGHT, &DOWN);
     policy.insert(&BOTTOM_RIGHT, &UP);
     policy
 }
 
-pub fn get_test_state_value() -> StateValue<GridworldState> {
-    let mut state_value = StateValue::new();
+pub fn get_test_state_value(states: &Sampler<GridworldState>) -> StateValue<GridworldState> {
+    let mut state_value = StateValue::new(states);
     state_value.insert(&TOP_LEFT, 96.0);
     state_value.insert(&TOP_RIGHT, 100.0);
     state_value.insert(&BOTTOM_RIGHT, 0.0);
