@@ -16,7 +16,7 @@ pub trait Item: Eq + Hash + Clone {}
 /// ## Example
 ///
 /// ```
-/// use madepro::models::mdp::{Item, State};
+/// use madepro::models::{Item, State};
 ///
 /// #[derive(PartialEq, Eq, Hash, Clone)]
 /// struct MyState {
@@ -37,7 +37,7 @@ pub trait State: Item {}
 /// ## Example
 ///
 /// ```
-/// use madepro::models::mdp::{Item, Action};
+/// use madepro::models::{Item, Action};
 ///
 /// #[derive(PartialEq, Eq, Hash, Clone)]
 /// enum MyAction {

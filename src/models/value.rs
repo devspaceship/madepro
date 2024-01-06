@@ -1,6 +1,6 @@
 use rand::prelude::*;
 
-use crate::defaults::NotFound;
+use crate::errors::NotFound;
 
 use super::{Action, Policy, Sampler, State};
 
