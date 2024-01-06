@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::defaults::NotFound;
+
 use super::{Action, Sampler, State};
 
 /// # Policy
@@ -27,7 +29,9 @@ where
 
     /// Returns the action associated with the given state.
     pub fn get(&self, state: &S) -> &A {
-        self.0.get(state).expect("state not found in policy")
+        self.0
+            .get(state)
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInPolicy))
     }
 
     /// Inserts the given action for the given state.

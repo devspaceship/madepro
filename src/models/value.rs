@@ -1,5 +1,7 @@
 use rand::prelude::*;
 
+use crate::defaults::NotFound;
+
 use super::{Action, Policy, Sampler, State};
 
 use std::collections::HashMap;
@@ -22,7 +24,10 @@ where
     }
 
     pub fn get(&self, state: &S) -> f64 {
-        *self.0.get(state).expect("state not found in state value")
+        *self
+            .0
+            .get(state)
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInStateValue))
     }
 
     pub fn insert(&mut self, state: &S, value: f64) {
@@ -51,7 +56,7 @@ where
         *self
             .0
             .get(action)
-            .expect("action not found in state action value")
+            .unwrap_or_else(|| panic!("{}", NotFound::ActionInStateActionValue))
     }
 
     pub fn insert(&mut self, action: &A, value: f64) {
@@ -118,28 +123,28 @@ where
     pub fn get(&self, state: &S, action: &A) -> f64 {
         self.0
             .get(state)
-            .expect("state not found in action value")
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInActionValue))
             .get(action)
     }
 
     pub fn insert(&mut self, state: &S, action: &A, value: f64) {
         self.0
             .get_mut(state)
-            .expect("state not found in action value")
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInActionValue))
             .insert(action, value);
     }
 
     pub fn greedy(&self, state: &S) -> &A {
         self.0
             .get(state)
-            .expect("state not found in action value")
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInActionValue))
             .greedy()
     }
 
     pub fn epsilon_greedy<'a>(&'a self, actions: &'a Sampler<A>, state: &S, epsilon: f64) -> &A {
         self.0
             .get(state)
-            .expect("state not found in action value")
+            .unwrap_or_else(|| panic!("{}", NotFound::StateInActionValue))
             .epsilon_greedy(actions, epsilon)
     }
 
