@@ -6,7 +6,7 @@ use super::{Action, Policy, Sampler, State};
 
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StateValue<S>(HashMap<S, f64>)
 where
     S: State;
@@ -35,7 +35,7 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StateActionValue<A>(HashMap<A, f64>)
 where
     A: Action;
@@ -88,20 +88,7 @@ where
     }
 }
 
-impl<A> Clone for StateActionValue<A>
-where
-    A: Action,
-{
-    fn clone(&self) -> Self {
-        let mut map = HashMap::new();
-        for (action, value) in &self.0 {
-            map.insert(action.clone(), *value);
-        }
-        Self(map)
-    }
-}
-
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ActionValue<S, A>(HashMap<S, StateActionValue<A>>)
 where
     S: State,
@@ -154,20 +141,6 @@ where
             policy.insert(state, self.greedy(state));
         }
         policy
-    }
-}
-
-impl<S, A> Clone for ActionValue<S, A>
-where
-    S: State,
-    A: Action,
-{
-    fn clone(&self) -> Self {
-        let mut map = HashMap::new();
-        for (state, state_action_value) in &self.0 {
-            map.insert(state.clone(), state_action_value.clone());
-        }
-        Self(map)
     }
 }
 
