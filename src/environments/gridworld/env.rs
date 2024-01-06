@@ -1,7 +1,7 @@
 use crate::models::{Action, Item, Sampler, State, MDP};
 
-const NO_OP_TRANSITION_REWARD: f64 = -1.0;
-const END_TRANSITION_REWARD: f64 = 100.0;
+pub const NO_OP_TRANSITION_REWARD: f64 = -1.0;
+pub const END_TRANSITION_REWARD: f64 = 100.0;
 
 // State
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
@@ -124,6 +124,19 @@ mod tests {
     use crate::environments::gridworld::{
         get_gridworld, BOTTOM_RIGHT, DOWN, LEFT, RIGHT, TOP_LEFT, TOP_RIGHT, UP,
     };
+
+    #[test]
+    fn is_not_terminal() {
+        let mdp = get_gridworld();
+        assert!(!mdp.is_state_terminal(&TOP_LEFT));
+        assert!(!mdp.is_state_terminal(&TOP_RIGHT));
+    }
+
+    #[test]
+    fn is_terminal() {
+        let mdp = get_gridworld();
+        assert!(mdp.is_state_terminal(&BOTTOM_RIGHT));
+    }
 
     #[test]
     fn transition_to_boundaries() {

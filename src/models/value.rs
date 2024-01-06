@@ -170,3 +170,63 @@ where
         Self(map)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::Item;
+
+    #[derive(PartialEq, Eq, Hash, Clone, Debug)]
+    struct TestState(usize);
+    impl Item for TestState {}
+    impl State for TestState {}
+
+    #[derive(PartialEq, Eq, Hash, Clone, Debug)]
+    struct TestAction(usize);
+    impl Item for TestAction {}
+    impl Action for TestAction {}
+
+    fn get_states() -> Sampler<TestState> {
+        Sampler::new(vec![TestState(0), TestState(1)])
+    }
+
+    fn get_actions() -> Sampler<TestAction> {
+        Sampler::new(vec![TestAction(0), TestAction(1)])
+    }
+
+    fn get_state_action_value() -> StateActionValue<TestAction> {
+        let mut state_action_value = StateActionValue::new(&get_actions());
+        state_action_value.insert(&TestAction(0), 0.0);
+        state_action_value.insert(&TestAction(1), 1.0);
+        state_action_value
+    }
+
+    fn get_action_value() -> ActionValue<TestState, TestAction> {
+        let mut action_value = ActionValue::new(&get_states(), &get_actions());
+        action_value.insert(&TestState(0), &TestAction(0), 0.0);
+        action_value.insert(&TestState(0), &TestAction(1), 1.0);
+        action_value.insert(&TestState(1), &TestAction(0), 2.0);
+        action_value.insert(&TestState(1), &TestAction(1), 1.0);
+        action_value
+    }
+
+    #[test]
+    fn state_action_value_greedy() {
+        assert_eq!(get_state_action_value().greedy(), &TestAction(1));
+    }
+
+    #[test]
+    fn state_action_value_epsilon_greedy() {
+        assert_eq!(
+            get_state_action_value().epsilon_greedy(&get_actions(), 0.0),
+            &TestAction(1)
+        );
+    }
+
+    #[test]
+    fn action_value_greedy_policy() {
+        let policy = get_action_value().greedy_policy(&get_states(), &get_actions());
+        assert_eq!(policy.get(&TestState(0)), &TestAction(1));
+        assert_eq!(policy.get(&TestState(1)), &TestAction(0));
+    }
+}
