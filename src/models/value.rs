@@ -226,4 +226,25 @@ mod tests {
         assert_eq!(policy.get(&TestState(0)), &TestAction(1));
         assert_eq!(policy.get(&TestState(1)), &TestAction(0));
     }
+
+    #[test]
+    #[should_panic(expected = "state")]
+    fn unknown_state_in_state_value() {
+        let state_value = StateValue::new(&get_states());
+        state_value.get(&TestState(2));
+    }
+
+    #[test]
+    #[should_panic(expected = "action")]
+    fn unknown_action_in_state_action_value() {
+        let state_action_value = get_state_action_value();
+        state_action_value.get(&TestAction(2));
+    }
+
+    #[test]
+    #[should_panic(expected = "state")]
+    fn unknown_state_in_action_value() {
+        let action_value = get_action_value();
+        action_value.get(&TestState(2), &TestAction(0));
+    }
 }
