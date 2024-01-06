@@ -2,6 +2,8 @@ use std::hash::Hash;
 
 use super::Sampler;
 
+pub trait Item: Eq + Hash + Clone {}
+
 /// # State
 ///
 /// You have to implement this trait for your own state type.\
@@ -10,15 +12,18 @@ use super::Sampler;
 /// ## Example
 ///
 /// ```
-/// #[derive(PartialEq, Eq, Hash)]
+/// use madepro::models::mdp::{Item, State};
+///
+/// #[derive(PartialEq, Eq, Hash, Clone)]
 /// struct MyState {
 ///     x: u32,
 ///     y: u32,
 /// }
 ///
+/// impl Item for MyState {}
 /// impl State for MyState {}
 /// ```
-pub trait State: Eq + Hash {}
+pub trait State: Item {}
 
 /// # Action
 ///
@@ -28,7 +33,9 @@ pub trait State: Eq + Hash {}
 /// ## Example
 ///
 /// ```
-/// #[derive(PartialEq, Eq, Hash)]
+/// use madepro::models::mdp::{Item, Action};
+///
+/// #[derive(PartialEq, Eq, Hash, Clone)]
 /// enum MyAction {
 ///     Up,
 ///     Down,
@@ -36,9 +43,10 @@ pub trait State: Eq + Hash {}
 ///     Right,
 /// }
 ///
+/// impl Item for MyAction {}
 /// impl Action for MyAction {}
 /// ```
-pub trait Action: Eq + Hash {}
+pub trait Action: Item {}
 
 /// # Markov Decision Process
 ///
@@ -60,5 +68,5 @@ pub trait MDP {
     fn is_state_terminal(&self, state: &Self::State) -> bool;
 
     /// Given a state and an action, returns the next state and reward.
-    fn transition(&self, state: &Self::State, action: &Self::Action) -> (&Self::State, f64);
+    fn transition(&self, state: &Self::State, action: &Self::Action) -> (Self::State, f64);
 }

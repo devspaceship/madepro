@@ -22,10 +22,10 @@ pub fn get_test_config() -> Config {
         .exploration_rate(0.1)
 }
 
-pub fn get_optimal_policy<'a>(
-    states: &'a Sampler<GridworldState>,
-    actions: &'a Sampler<GridworldAction>,
-) -> Policy<'a, GridworldState, GridworldAction> {
+pub fn get_optimal_policy(
+    states: &Sampler<GridworldState>,
+    actions: &Sampler<GridworldAction>,
+) -> Policy<GridworldState, GridworldAction> {
     let mut policy = Policy::new(states, actions);
     policy.insert(&TOP_LEFT, &RIGHT);
     policy.insert(&TOP_RIGHT, &DOWN);

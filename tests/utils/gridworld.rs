@@ -1,5 +1,5 @@
 use madepro::models::{
-    mdp::{Action, State, MDP},
+    mdp::{Action, Item, State, MDP},
     Sampler,
 };
 
@@ -32,16 +32,8 @@ pub fn get_actions() -> Vec<GridworldAction> {
     ]
 }
 
-pub fn get_state_sampler() -> Sampler<GridworldState> {
-    get_states().into()
-}
-
-pub fn get_action_sampler() -> Sampler<GridworldAction> {
-    get_actions().into()
-}
-
 // State
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct GridworldState {
     i: usize,
     j: usize,
@@ -53,10 +45,11 @@ impl GridworldState {
     }
 }
 
+impl Item for GridworldState {}
 impl State for GridworldState {}
 
 // Action
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub enum GridworldAction {
     Down,
     Left,
@@ -64,6 +57,7 @@ pub enum GridworldAction {
     Up,
 }
 
+impl Item for GridworldAction {}
 impl Action for GridworldAction {}
 
 // Cell
@@ -116,13 +110,13 @@ impl MDP for Gridworld {
         *cell == Cell::End
     }
 
-    fn transition(&self, state: &Self::State, action: &Self::Action) -> (&Self::State, f64) {
+    fn transition(&self, state: &Self::State, action: &Self::Action) -> (Self::State, f64) {
         let cell = &self.cell_grid[state.i][state.j];
 
         // Edge cases
         // In theory the Cell::Wall case should never happen
         if (*cell) == Cell::End || (*cell) == Cell::Wall {
-            return (state, 0.0);
+            return (state.clone(), 0.0);
         }
 
         // Tentative position
@@ -138,16 +132,16 @@ impl MDP for Gridworld {
         let (n, m) = self.get_grid_size();
         let (n, m) = (n as i32, m as i32);
         if i_ < 0 || i_ >= n || j_ < 0 || j_ >= m {
-            return (state, NO_OP_TRANSITION_REWARD);
+            return (state.clone(), NO_OP_TRANSITION_REWARD);
         }
 
         // Result
         let (i_, j_) = (i_ as usize, j_ as usize);
         let cell_ = &self.cell_grid[i_][j_];
         match cell_ {
-            Cell::Air => (&Self::State::new(i_, j_), NO_OP_TRANSITION_REWARD),
-            Cell::Wall => (state, NO_OP_TRANSITION_REWARD),
-            Cell::End => (&Self::State::new(i_, j_), END_TRANSITION_REWARD),
+            Cell::Air => (Self::State::new(i_, j_), NO_OP_TRANSITION_REWARD),
+            Cell::Wall => (state.clone(), NO_OP_TRANSITION_REWARD),
+            Cell::End => (Self::State::new(i_, j_), END_TRANSITION_REWARD),
         }
     }
 }
@@ -164,7 +158,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &LEFT),
-            (&TOP_LEFT, NO_OP_TRANSITION_REWARD)
+            (TOP_LEFT.clone(), NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -174,7 +168,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &RIGHT),
-            (&TOP_RIGHT, NO_OP_TRANSITION_REWARD)
+            (TOP_RIGHT.clone(), NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -184,7 +178,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &DOWN),
-            (&TOP_LEFT, NO_OP_TRANSITION_REWARD)
+            (TOP_LEFT.clone(), NO_OP_TRANSITION_REWARD)
         );
     }
 
@@ -194,7 +188,7 @@ mod tests {
         let mdp = get_test_mdp();
         assert_eq!(
             mdp.transition(&TOP_RIGHT, &DOWN),
-            (&BOTTOM_RIGHT, END_TRANSITION_REWARD)
+            (BOTTOM_RIGHT.clone(), END_TRANSITION_REWARD)
         );
     }
 
@@ -202,6 +196,9 @@ mod tests {
     #[ignore = "meta test"]
     fn transition_from_terminal() {
         let mdp = get_test_mdp();
-        assert_eq!(mdp.transition(&BOTTOM_RIGHT, &UP), (&BOTTOM_RIGHT, 0.0));
+        assert_eq!(
+            mdp.transition(&BOTTOM_RIGHT, &UP),
+            (BOTTOM_RIGHT.clone(), 0.0)
+        );
     }
 }

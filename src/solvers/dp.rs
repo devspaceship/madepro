@@ -10,12 +10,12 @@ use crate::{
 /// The algorithm stops when the state value converge.
 /// If the `iterations_before_improvement` parameter is set,
 /// the algorithm will stop early after the given number of iterations.
-pub fn policy_evaluation<'a, M>(
-    mdp: &'a M,
+pub fn policy_evaluation<M>(
+    mdp: &M,
     config: &Config,
-    policy: &Policy<'a, M::State, M::Action>,
-    initial_state_value: Option<StateValue<'a, M::State>>,
-) -> StateValue<'a, M::State>
+    policy: &Policy<M::State, M::Action>,
+    initial_state_value: Option<StateValue<M::State>>,
+) -> StateValue<M::State>
 where
     M: MDP,
 {
@@ -28,7 +28,7 @@ where
         for state in states {
             let action = policy.get(state);
             let (next_state, reward) = mdp.transition(state, action);
-            let next_state_value = state_value.get(next_state);
+            let next_state_value = state_value.get(&next_state);
             let new_state_value = reward + config.discount_factor * next_state_value;
             delta = delta.max((new_state_value - state_value.get(state)).abs());
             state_value.insert(state, new_state_value);
@@ -48,11 +48,11 @@ where
 ///
 /// Given an MDP, a discount factor and a state value,
 /// this function computes the optimal policy.
-pub fn policy_improvement<'a, M>(
-    mdp: &'a M,
+pub fn policy_improvement<M>(
+    mdp: &M,
     config: &Config,
     state_value: &StateValue<M::State>,
-) -> Policy<'a, M::State, M::Action>
+) -> Policy<M::State, M::Action>
 where
     M: MDP,
 {
@@ -64,7 +64,7 @@ where
         let mut best_value = None;
         for action in actions {
             let (next_state, reward) = mdp.transition(state, action);
-            let value = reward + config.discount_factor * state_value.get(next_state);
+            let value = reward + config.discount_factor * state_value.get(&next_state);
             if best_value.is_none() || value > best_value.unwrap() {
                 best_value = Some(value);
                 best_action = Some(action);
@@ -75,7 +75,7 @@ where
     policy
 }
 
-fn policy_value_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
+fn policy_value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
@@ -94,7 +94,7 @@ where
     state_value
 }
 
-pub fn policy_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
+pub fn policy_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
@@ -105,7 +105,7 @@ where
     policy_value_iteration(mdp, config)
 }
 
-pub fn value_iteration<'a, M>(mdp: &'a M, config: &Config) -> StateValue<'a, M::State>
+pub fn value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
 {
