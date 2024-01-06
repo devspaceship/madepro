@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
-use super::{
-    mdp::{Action, State},
-    Sampler,
-};
+use super::{Action, Sampler, State};
 
 /// # Policy
 ///

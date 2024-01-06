@@ -1,10 +1,6 @@
 use rand::prelude::*;
 
-use super::{
-    mdp::{Action, State},
-    policy::Policy,
-    Sampler,
-};
+use super::{Action, Policy, Sampler, State};
 
 use std::collections::HashMap;
 

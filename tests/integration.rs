@@ -5,7 +5,7 @@ use utils::{
 };
 
 use madepro::{
-    models::mdp::MDP,
+    models::MDP,
     solvers::{
         dp::{policy_evaluation, policy_improvement, policy_iteration, value_iteration},
         td::{q_learning, sarsa},
