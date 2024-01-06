@@ -2,12 +2,16 @@ use std::hash::Hash;
 
 use super::Sampler;
 
+/// # Item
+///
+/// You have to implement this trait for your own state or action type.\
+/// This trait is used to ensure that it can be used as a key in a HashMap.\
+/// It also ensures that we can call `.clone()` on it.
 pub trait Item: Eq + Hash + Clone {}
 
 /// # State
 ///
-/// You have to implement this trait for your own state type.\
-/// It ensures that your state type can be used as a key in a HashMap.
+/// You have to implement this trait for your own state type.
 ///
 /// ## Example
 ///
