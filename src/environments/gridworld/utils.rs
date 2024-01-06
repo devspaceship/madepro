@@ -1,8 +1,32 @@
-mod gridworld;
-use gridworld::*;
-
-use madepro::models::{Config, Policy, Sampler, StateValue};
+use super::{Cell, Gridworld, GridworldAction, GridworldState};
+use crate::models::{Config, Policy, Sampler, StateValue};
 use std::vec;
+
+pub static TOP_LEFT: GridworldState = GridworldState::new(0, 0);
+pub static TOP_RIGHT: GridworldState = GridworldState::new(0, 1);
+pub static BOTTOM_RIGHT: GridworldState = GridworldState::new(1, 1);
+
+pub static LEFT: GridworldAction = GridworldAction::Left;
+pub static RIGHT: GridworldAction = GridworldAction::Right;
+pub static UP: GridworldAction = GridworldAction::Up;
+pub static DOWN: GridworldAction = GridworldAction::Down;
+
+pub fn get_states() -> Vec<GridworldState> {
+    vec![
+        GridworldState::new(0, 0),
+        GridworldState::new(0, 1),
+        GridworldState::new(1, 1),
+    ]
+}
+
+pub fn get_actions() -> Vec<GridworldAction> {
+    vec![
+        GridworldAction::Down,
+        GridworldAction::Left,
+        GridworldAction::Right,
+        GridworldAction::Up,
+    ]
+}
 
 pub fn get_test_mdp() -> Gridworld {
     Gridworld::new(

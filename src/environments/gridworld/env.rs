@@ -1,33 +1,7 @@
-use madepro::models::{Action, Item, Sampler, State, MDP};
+use crate::models::{Action, Item, Sampler, State, MDP};
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;
 const END_TRANSITION_REWARD: f64 = 100.0;
-
-pub static TOP_LEFT: GridworldState = GridworldState::new(0, 0);
-pub static TOP_RIGHT: GridworldState = GridworldState::new(0, 1);
-pub static BOTTOM_RIGHT: GridworldState = GridworldState::new(1, 1);
-
-pub static LEFT: GridworldAction = GridworldAction::Left;
-pub static RIGHT: GridworldAction = GridworldAction::Right;
-pub static UP: GridworldAction = GridworldAction::Up;
-pub static DOWN: GridworldAction = GridworldAction::Down;
-
-pub fn get_states() -> Vec<GridworldState> {
-    vec![
-        GridworldState::new(0, 0),
-        GridworldState::new(0, 1),
-        GridworldState::new(1, 1),
-    ]
-}
-
-pub fn get_actions() -> Vec<GridworldAction> {
-    vec![
-        GridworldAction::Down,
-        GridworldAction::Left,
-        GridworldAction::Right,
-        GridworldAction::Up,
-    ]
-}
 
 // State
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
@@ -144,13 +118,14 @@ impl MDP for Gridworld {
 }
 
 // Tests
+#[cfg(test)]
 mod tests {
-    use crate::utils::get_test_mdp;
-
     use super::*;
+    use crate::environments::gridworld::{
+        get_test_mdp, BOTTOM_RIGHT, DOWN, LEFT, RIGHT, TOP_LEFT, TOP_RIGHT, UP,
+    };
 
     #[test]
-    #[ignore = "meta test"]
     fn transition_to_boundaries() {
         let mdp = get_test_mdp();
         assert_eq!(
@@ -160,7 +135,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "meta test"]
     fn transition_to_air() {
         let mdp = get_test_mdp();
         assert_eq!(
@@ -170,7 +144,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "meta test"]
     fn transition_to_wall() {
         let mdp = get_test_mdp();
         assert_eq!(
@@ -180,7 +153,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "meta test"]
     fn transition_to_end() {
         let mdp = get_test_mdp();
         assert_eq!(
@@ -190,7 +162,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "meta test"]
     fn transition_from_terminal() {
         let mdp = get_test_mdp();
         assert_eq!(
