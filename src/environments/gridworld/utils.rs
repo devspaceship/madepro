@@ -12,23 +12,14 @@ pub static UP: GridworldAction = GridworldAction::Up;
 pub static DOWN: GridworldAction = GridworldAction::Down;
 
 pub fn get_states() -> Vec<GridworldState> {
-    vec![
-        GridworldState::new(0, 0),
-        GridworldState::new(0, 1),
-        GridworldState::new(1, 1),
-    ]
+    vec![TOP_LEFT.clone(), TOP_RIGHT.clone(), BOTTOM_RIGHT.clone()]
 }
 
 pub fn get_actions() -> Vec<GridworldAction> {
-    vec![
-        GridworldAction::Down,
-        GridworldAction::Left,
-        GridworldAction::Right,
-        GridworldAction::Up,
-    ]
+    vec![DOWN.clone(), LEFT.clone(), RIGHT.clone(), UP.clone()]
 }
 
-pub fn get_test_mdp() -> Gridworld {
+pub fn get_gridworld() -> Gridworld {
     Gridworld::new(
         vec![vec![Cell::Air, Cell::Air], vec![Cell::Wall, Cell::End]],
         get_states(),
