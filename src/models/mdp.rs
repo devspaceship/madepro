@@ -2,13 +2,6 @@ use std::hash::Hash;
 
 use super::Sampler;
 
-/// # Item
-///
-/// You have to implement this trait for your own state or action type.\
-/// This trait is used to ensure that it can be used as a key in a HashMap.\
-/// It also ensures that we can call `.clone()` on it.
-pub trait Item: Eq + Hash + Clone {}
-
 /// # State
 ///
 /// You have to implement this trait for your own state type.
@@ -16,7 +9,7 @@ pub trait Item: Eq + Hash + Clone {}
 /// ## Example
 ///
 /// ```
-/// use madepro::models::{Item, State};
+/// use madepro::models::State;
 ///
 /// #[derive(PartialEq, Eq, Hash, Clone)]
 /// struct MyState {
@@ -24,20 +17,18 @@ pub trait Item: Eq + Hash + Clone {}
 ///     y: u32,
 /// }
 ///
-/// impl Item for MyState {}
 /// impl State for MyState {}
 /// ```
-pub trait State: Item {}
+pub trait State: Eq + Hash + Clone {}
 
 /// # Action
 ///
-/// You have to implement this trait for your own action type.\
-/// It ensures that your action type can be used as a key in a HashMap.
+/// You have to implement this trait for your own action type.
 ///
 /// ## Example
 ///
 /// ```
-/// use madepro::models::{Item, Action};
+/// use madepro::models::Action;
 ///
 /// #[derive(PartialEq, Eq, Hash, Clone)]
 /// enum MyAction {
@@ -47,10 +38,9 @@ pub trait State: Item {}
 ///     Right,
 /// }
 ///
-/// impl Item for MyAction {}
 /// impl Action for MyAction {}
 /// ```
-pub trait Action: Item {}
+pub trait Action: Eq + Hash + Clone {}
 
 /// # Markov Decision Process
 ///
