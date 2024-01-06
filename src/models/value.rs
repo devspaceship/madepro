@@ -26,7 +26,7 @@ where
     }
 
     pub fn get(&self, state: &S) -> f64 {
-        *self.0.get(state).unwrap()
+        *self.0.get(state).expect("state not found in state value")
     }
 
     pub fn insert(&mut self, state: &S, value: f64) {
@@ -52,7 +52,10 @@ where
     }
 
     pub fn get(&self, action: &A) -> f64 {
-        *self.0.get(action).unwrap()
+        *self
+            .0
+            .get(action)
+            .expect("action not found in state action value")
     }
 
     pub fn insert(&mut self, action: &A, value: f64) {
@@ -70,6 +73,7 @@ where
                     (best_action, best_value)
                 }
             })
+            // unwrap is safe because the map is not empty
             .unwrap();
         best_action
     }
@@ -116,19 +120,31 @@ where
     }
 
     pub fn get(&self, state: &S, action: &A) -> f64 {
-        self.0.get(state).unwrap().get(action)
+        self.0
+            .get(state)
+            .expect("state not found in action value")
+            .get(action)
     }
 
     pub fn insert(&mut self, state: &S, action: &A, value: f64) {
-        self.0.get_mut(state).unwrap().insert(action, value);
+        self.0
+            .get_mut(state)
+            .expect("state not found in action value")
+            .insert(action, value);
     }
 
     pub fn greedy(&self, state: &S) -> &A {
-        self.0.get(state).unwrap().greedy()
+        self.0
+            .get(state)
+            .expect("state not found in action value")
+            .greedy()
     }
 
     pub fn epsilon_greedy<'a>(&'a self, actions: &'a Sampler<A>, state: &S, epsilon: f64) -> &A {
-        self.0.get(state).unwrap().epsilon_greedy(actions, epsilon)
+        self.0
+            .get(state)
+            .expect("state not found in action value")
+            .epsilon_greedy(actions, epsilon)
     }
 
     pub fn greedy_policy(&self, states: &Sampler<S>, actions: &Sampler<A>) -> Policy<S, A> {

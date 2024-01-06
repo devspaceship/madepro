@@ -7,12 +7,13 @@ pub struct Sampler<T>(Vec<T>);
 
 impl<T> Sampler<T> {
     pub fn new(items: Vec<T>) -> Self {
-        assert!(!items.is_empty(), "Sampler must contain at least one item.");
+        assert!(!items.is_empty(), "sampler must contain at least one item.");
         Self(items)
     }
 
     pub fn get_random(&self) -> &T {
         let mut rng = thread_rng();
+        // unwrap is safe because sampler is not empty
         self.0.choose(&mut rng).unwrap()
     }
 
