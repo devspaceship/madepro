@@ -1,7 +1,4 @@
-use crate::{
-    config::Config,
-    models::{mdp::MDP, policy::Policy, value::StateValue},
-};
+use crate::models::{Config, Policy, StateValue, MDP};
 
 /// # Policy Evaluation
 ///
@@ -70,6 +67,7 @@ where
                 best_action = Some(action);
             }
         }
+        // unwrap is safe because actions is not empty
         policy.insert(state, best_action.unwrap());
     }
     policy

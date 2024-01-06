@@ -1,7 +1,4 @@
-use crate::{
-    config::Config,
-    models::{mdp::MDP, value::ActionValue},
-};
+use crate::models::{ActionValue, Config, MDP};
 
 fn sarsa_q_learning<M>(
     mdp: &M,

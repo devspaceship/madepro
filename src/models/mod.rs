@@ -1,6 +1,11 @@
-pub mod mdp;
-pub mod policy;
-pub mod value;
-
+mod config;
+mod mdp;
+mod policy;
 mod sampler;
-pub use sampler::Sampler;
+mod value;
+
+pub use config::*;
+pub use mdp::*;
+pub use policy::*;
+pub use sampler::*;
+pub use value::*;

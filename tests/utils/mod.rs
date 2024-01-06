@@ -1,10 +1,7 @@
 mod gridworld;
 use gridworld::*;
 
-use madepro::{
-    config::Config,
-    models::{policy::Policy, value::StateValue, Sampler},
-};
+use madepro::models::{Config, Policy, Sampler, StateValue};
 use std::vec;
 
 pub fn get_test_mdp() -> Gridworld {

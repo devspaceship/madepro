@@ -1,7 +1,4 @@
-use madepro::models::{
-    mdp::{Action, Item, State, MDP},
-    Sampler,
-};
+use madepro::models::{Action, Item, Sampler, State, MDP};
 
 const NO_OP_TRANSITION_REWARD: f64 = -1.0;
 const END_TRANSITION_REWARD: f64 = 100.0;

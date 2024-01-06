@@ -1,4 +1,4 @@
-use super::defaults::{
+use crate::defaults::{
     DISCOUNT_FACTOR, EXPLORATION_RATE, ITERATIONS_BEFORE_IMPROVEMENT, LEARNING_RATE, MAX_NUM_STEPS,
     NUM_EPISODES,
 };
