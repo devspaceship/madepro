@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::defaults::NotFound;
+use crate::errors::NotFound;
 
 use super::{Action, Sampler, State};
 

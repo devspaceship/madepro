@@ -1,6 +1,6 @@
 //! # Errors
 //!
-//! This module contains the default error messages for the library.
+//! This module contains the error messages for the library.
 
 use std::fmt;
 
