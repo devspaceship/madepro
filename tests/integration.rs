@@ -1,10 +1,8 @@
-mod utils;
-use utils::{
-    assert_policy_optimal, assert_state_value_correct, get_optimal_policy, get_test_config,
-    get_test_mdp, get_test_state_value,
-};
-
 use madepro::{
+    environments::gridworld::{
+        assert_policy_optimal, assert_state_value_correct, get_optimal_policy, get_test_config,
+        get_test_mdp, get_test_state_value,
+    },
     models::MDP,
     solvers::{
         dp::{policy_evaluation, policy_improvement, policy_iteration, value_iteration},
