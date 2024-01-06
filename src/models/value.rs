@@ -174,16 +174,13 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::models::Item;
 
     #[derive(PartialEq, Eq, Hash, Clone, Debug)]
     struct TestState(usize);
-    impl Item for TestState {}
     impl State for TestState {}
 
     #[derive(PartialEq, Eq, Hash, Clone, Debug)]
     struct TestAction(usize);
-    impl Item for TestAction {}
     impl Action for TestAction {}
 
     fn get_states() -> Sampler<TestState> {

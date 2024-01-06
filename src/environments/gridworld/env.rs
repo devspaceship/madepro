@@ -1,4 +1,4 @@
-use crate::models::{Action, Item, Sampler, State, MDP};
+use crate::models::{Action, Sampler, State, MDP};
 
 pub const NO_OP_TRANSITION_REWARD: f64 = -1.0;
 pub const END_TRANSITION_REWARD: f64 = 100.0;
@@ -16,7 +16,6 @@ impl GridworldState {
     }
 }
 
-impl Item for GridworldState {}
 impl State for GridworldState {}
 
 // Action
@@ -28,7 +27,6 @@ pub enum GridworldAction {
     Up,
 }
 
-impl Item for GridworldAction {}
 impl Action for GridworldAction {}
 
 // Cell
