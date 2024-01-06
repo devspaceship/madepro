@@ -122,12 +122,12 @@ impl MDP for Gridworld {
 mod tests {
     use super::*;
     use crate::environments::gridworld::{
-        get_test_mdp, BOTTOM_RIGHT, DOWN, LEFT, RIGHT, TOP_LEFT, TOP_RIGHT, UP,
+        get_gridworld, BOTTOM_RIGHT, DOWN, LEFT, RIGHT, TOP_LEFT, TOP_RIGHT, UP,
     };
 
     #[test]
     fn transition_to_boundaries() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &LEFT),
             (TOP_LEFT.clone(), NO_OP_TRANSITION_REWARD)
@@ -136,7 +136,7 @@ mod tests {
 
     #[test]
     fn transition_to_air() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &RIGHT),
             (TOP_RIGHT.clone(), NO_OP_TRANSITION_REWARD)
@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn transition_to_wall() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         assert_eq!(
             mdp.transition(&TOP_LEFT, &DOWN),
             (TOP_LEFT.clone(), NO_OP_TRANSITION_REWARD)
@@ -154,7 +154,7 @@ mod tests {
 
     #[test]
     fn transition_to_end() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         assert_eq!(
             mdp.transition(&TOP_RIGHT, &DOWN),
             (BOTTOM_RIGHT.clone(), END_TRANSITION_REWARD)
@@ -163,7 +163,7 @@ mod tests {
 
     #[test]
     fn transition_from_terminal() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         assert_eq!(
             mdp.transition(&BOTTOM_RIGHT, &UP),
             (BOTTOM_RIGHT.clone(), 0.0)

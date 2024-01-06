@@ -61,11 +61,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::environments::gridworld::{assert_policy_optimal, get_test_config, get_test_mdp};
+    use crate::environments::gridworld::{assert_policy_optimal, get_gridworld, get_test_config};
 
     #[test]
     fn test_sarsa() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         let config = get_test_config();
         let action_value = sarsa(&mdp, &config);
         let policy = action_value.greedy_policy(mdp.get_states(), mdp.get_actions());
@@ -74,7 +74,7 @@ mod tests {
 
     #[test]
     fn test_q_learning() {
-        let mdp = get_test_mdp();
+        let mdp = get_gridworld();
         let config = get_test_config();
         let action_value = q_learning(&mdp, &config);
         let policy = action_value.greedy_policy(mdp.get_states(), mdp.get_actions());
