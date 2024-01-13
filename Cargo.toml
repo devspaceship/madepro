@@ -1,9 +1,14 @@
 [package]
 name = "madepro"
 version = "0.1.0"
+authors = ["Thomas Saint-Gérand <me@devspaceship.com>"]
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A minimal Rust library crate for solving finite deterministic Markov decision processes (MDPs)"
+readme = "README.md"
+keywords = ["rl", "mdp", "markov", "sarsa", "q-learning"]
+categories = ["algorithms", "science", "simulation"]
+license = "MIT"
+repository = "https://github.com/devspaceship/madepro"
 
 [dependencies]
 rand = "0.8.5"
