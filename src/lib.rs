@@ -1,25 +1,35 @@
 //! # madepro
 //!
-//! The `madepro` crate is a reinforcement learning library for solving Markov Decision Processes.
+//! A minimal Rust library crate for solving finite deterministic Markov decision processes (MDPs).
 //!
 //! ## Limitations
 //!
 //! This library is still in development and is not ready for production use.
+//! It only implements a few algorithms and one environment.
+//! It is also limited to deterministic MDPs.
 //! Originally, I only created this library in order to refactor my blog post
 //! on [Markov Decision Processes](https://devspaceship.com/posts/gridworld).
-//!
 //! However, I decided to probably continue working on it when I have the time.
 //! In the future I would first like to make the library more generic
-//! by making it able to solve stochastic processes and accept stochastic policies for instance
 //! and then add more algorithms and environments.
 //!
-//! ## Example Usage
+//! ## Features
 //!
-//! ### Gridworld
+//! The library currently supports the following algorithms:
 //!
-//! The following example shows how to use the library to solve the Gridworld environment.
+//! - [Policy Iteration](https://en.wikipedia.org/wiki/Markov_decision_process#Policy_iteration)
+//! - [Value Iteration](https://en.wikipedia.org/wiki/Markov_decision_process#Value_iteration)
+//! - [SARSA](https://en.wikipedia.org/wiki/State-Action-Reward-State-Action)
+//! - [Q-Learning](https://en.wikipedia.org/wiki/Q-learning)
 //!
-//! TODO
+//! ## Roadmap
+//!
+//! The following features are planned for the future:
+//!
+//! - Stochastic MDPs
+//! - Stochastic policies
+//! - State-dependent action spaces
+//! - More algorithms
 
 pub mod defaults;
 pub mod environments;
