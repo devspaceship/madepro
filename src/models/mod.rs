@@ -1,3 +1,7 @@
+//! # models
+//!
+//! This module contains the models used in the library.
+
 mod config;
 mod mdp;
 mod policy;

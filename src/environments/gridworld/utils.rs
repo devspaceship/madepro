@@ -1,6 +1,6 @@
 use super::{
-    Cell, Gridworld, GridworldAction, GridworldState, END_TRANSITION_REWARD,
-    NO_OP_TRANSITION_REWARD,
+    Cell, Gridworld, GridworldAction, GridworldState, BOTTOM_RIGHT, DOWN, END_TRANSITION_REWARD,
+    LEFT, NO_OP_TRANSITION_REWARD, RIGHT, TOP_LEFT, TOP_RIGHT, UP,
 };
 use crate::models::{Config, Policy, Sampler, StateValue};
 use std::vec;
@@ -11,23 +11,15 @@ const BOTTOM_RIGHT_VALUE: f64 = 0.0;
 const TOP_RIGHT_VALUE: f64 = END_TRANSITION_REWARD;
 const TOP_LEFT_VALUE: f64 = NO_OP_TRANSITION_REWARD + DISCOUNT_FACTOR * TOP_RIGHT_VALUE;
 
-pub static TOP_LEFT: GridworldState = GridworldState::new(0, 0);
-pub static TOP_RIGHT: GridworldState = GridworldState::new(0, 1);
-pub static BOTTOM_RIGHT: GridworldState = GridworldState::new(1, 1);
-
-pub static LEFT: GridworldAction = GridworldAction::Left;
-pub static RIGHT: GridworldAction = GridworldAction::Right;
-pub static UP: GridworldAction = GridworldAction::Up;
-pub static DOWN: GridworldAction = GridworldAction::Down;
-
-pub fn get_states() -> Vec<GridworldState> {
+fn get_states() -> Vec<GridworldState> {
     vec![TOP_LEFT.clone(), TOP_RIGHT.clone(), BOTTOM_RIGHT.clone()]
 }
 
-pub fn get_actions() -> Vec<GridworldAction> {
+fn get_actions() -> Vec<GridworldAction> {
     vec![DOWN.clone(), LEFT.clone(), RIGHT.clone(), UP.clone()]
 }
 
+#[doc(hidden)]
 pub fn get_gridworld() -> Gridworld {
     Gridworld::new(
         vec![vec![Cell::Air, Cell::Air], vec![Cell::Wall, Cell::End]],
@@ -36,6 +28,7 @@ pub fn get_gridworld() -> Gridworld {
     )
 }
 
+#[doc(hidden)]
 pub fn get_test_config() -> Config {
     Config::new()
         .discount_factor(DISCOUNT_FACTOR)
@@ -43,6 +36,7 @@ pub fn get_test_config() -> Config {
         .exploration_rate(EXPLORATION_RATE)
 }
 
+#[doc(hidden)]
 pub fn get_optimal_policy(
     states: &Sampler<GridworldState>,
     actions: &Sampler<GridworldAction>,
@@ -54,6 +48,7 @@ pub fn get_optimal_policy(
     policy
 }
 
+#[doc(hidden)]
 pub fn get_test_state_value(states: &Sampler<GridworldState>) -> StateValue<GridworldState> {
     let mut state_value = StateValue::new(states);
     state_value.insert(&TOP_LEFT, TOP_LEFT_VALUE);
@@ -62,11 +57,13 @@ pub fn get_test_state_value(states: &Sampler<GridworldState>) -> StateValue<Grid
     state_value
 }
 
+#[doc(hidden)]
 pub fn assert_policy_optimal(policy: &Policy<GridworldState, GridworldAction>) {
     assert_eq!(policy.get(&TOP_LEFT), &RIGHT);
     assert_eq!(policy.get(&TOP_RIGHT), &DOWN);
 }
 
+#[doc(hidden)]
 pub fn assert_state_value_correct(state_value: &StateValue<GridworldState>) {
     assert_eq!(state_value.get(&TOP_LEFT), TOP_LEFT_VALUE);
     assert_eq!(state_value.get(&TOP_RIGHT), TOP_RIGHT_VALUE);

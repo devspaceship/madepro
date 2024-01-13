@@ -1,3 +1,7 @@
+//! # temporal_difference
+//!
+//! The `temporal_difference` module contains the implementations of the temporal difference algorithms.
+
 use crate::models::{ActionValue, Config, MDP};
 
 fn sarsa_q_learning<M>(
@@ -44,6 +48,14 @@ where
     action_value
 }
 
+/// # SARSA
+///
+/// This function implements the SARSA algorithm.
+/// It works by using the Bellman equation to iteratively update the action value.
+/// The algorithm stops after the given number of episodes.
+/// An episode is a sequence of state-action pairs that ends in a terminal state.
+/// The number of steps per episode is limited by the `max_num_steps` parameter in the config.
+/// The algorithm uses the epsilon-greedy policy to select actions.
 pub fn sarsa<M>(mdp: &M, config: &Config) -> ActionValue<M::State, M::Action>
 where
     M: MDP,
@@ -51,6 +63,16 @@ where
     sarsa_q_learning(mdp, config, false)
 }
 
+/// # Q-Learning
+///
+/// This function implements the Q-Learning algorithm.
+/// It works by using the Bellman equation to iteratively update the action value.
+/// The algorithm stops after the given number of episodes.
+/// An episode is a sequence of state-action pairs that ends in a terminal state.
+/// The number of steps per episode is limited by the `max_num_steps` parameter in the config.
+/// The algorithm uses the epsilon-greedy policy to select actions.
+/// Unlike SARSA, Q-Learning uses the greedy policy to select the action
+/// from which the value is used in the update rule.
 pub fn q_learning<M>(mdp: &M, config: &Config) -> ActionValue<M::State, M::Action>
 where
     M: MDP,

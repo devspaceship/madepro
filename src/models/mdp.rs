@@ -44,10 +44,10 @@ pub trait Action: Eq + Hash + Clone {}
 
 /// # Markov Decision Process
 ///
-/// You have to implement this trait for your own MDP.\
+/// You have to implement this trait for your own MDP.
 /// You should allocate the state and action samplers
-/// in the constructor of your MDP.\
-/// You can use the `Sampler` struct for this purpose.
+/// in the constructor of your MDP.
+/// You can use the [`Sampler`] struct for this purpose.
 pub trait MDP {
     type State: State;
     type Action: Action;
