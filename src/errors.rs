@@ -1,9 +1,12 @@
-//! # Errors
+//! # errors
 //!
 //! This module contains the error messages for the library.
+//! It currently only contains the `NotFound` enum.
 
 use std::fmt;
 
+/// The `NotFound` enum contains the error messages
+/// for when a state or action is not found as a key in a map.
 pub enum NotFound {
     StateInPolicy,
     StateInStateValue,

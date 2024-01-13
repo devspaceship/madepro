@@ -1,9 +1,8 @@
 use crate::models::{Action, Sampler, State, MDP};
 
-pub const NO_OP_TRANSITION_REWARD: f64 = -1.0;
-pub const END_TRANSITION_REWARD: f64 = 100.0;
+use super::{END_TRANSITION_REWARD, NO_OP_TRANSITION_REWARD};
 
-// State
+/// A gridworld state (i, j)
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct GridworldState {
     i: usize,
@@ -11,6 +10,7 @@ pub struct GridworldState {
 }
 
 impl GridworldState {
+    /// Creates a new gridworld state with the specified coordinates
     pub const fn new(i: usize, j: usize) -> Self {
         Self { i, j }
     }
@@ -18,7 +18,7 @@ impl GridworldState {
 
 impl State for GridworldState {}
 
-// Action
+/// A gridworld action
 #[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub enum GridworldAction {
     Down,
@@ -29,7 +29,7 @@ pub enum GridworldAction {
 
 impl Action for GridworldAction {}
 
-// Cell
+/// A gridworld cell
 #[derive(Debug, PartialEq)]
 pub enum Cell {
     Air,
@@ -37,7 +37,7 @@ pub enum Cell {
     End,
 }
 
-// Gridworld
+/// A gridworld
 pub struct Gridworld {
     cell_grid: Vec<Vec<Cell>>,
     states: Sampler<GridworldState>,
@@ -45,6 +45,7 @@ pub struct Gridworld {
 }
 
 impl Gridworld {
+    /// Creates a new gridworld with the specified cell grid, states, and actions
     pub fn new(
         cell_grid: Vec<Vec<Cell>>,
         states: Vec<GridworldState>,
@@ -57,6 +58,7 @@ impl Gridworld {
         }
     }
 
+    /// Returns the grid's width and height
     fn get_grid_size(&self) -> (usize, usize) {
         (self.cell_grid.len(), self.cell_grid[0].len())
     }
@@ -115,7 +117,6 @@ impl MDP for Gridworld {
     }
 }
 
-// Tests
 #[cfg(test)]
 mod tests {
     use super::*;

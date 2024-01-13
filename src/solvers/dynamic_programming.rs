@@ -1,3 +1,7 @@
+//! # dynamic_programming
+//!
+//! The `dynamic_programming` module contains the implementations of the dynamic programming algorithms.
+
 use crate::models::{Config, Policy, StateValue, MDP};
 
 /// # Policy Evaluation
@@ -92,6 +96,12 @@ where
     state_value
 }
 
+/// # Policy Iteration
+///
+/// This function implements the policy iteration algorithm.
+/// It works by iteratively evaluating and improving the policy.
+/// The algorithm stops when the policy converge.
+/// The `iterations_before_improvement` parameter must be None.
 pub fn policy_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,
@@ -103,6 +113,13 @@ where
     policy_value_iteration(mdp, config)
 }
 
+/// # Value Iteration
+///
+/// This function implements the value iteration algorithm.
+/// It works by iteratively updating the state value and improving the policy.
+/// The algorithm stops when the policy converge.
+/// The only difference with policy iteration is that the value evaluation is stopped early.
+/// The `iterations_before_improvement` parameter must be Some(u32) and > 0.
 pub fn value_iteration<M>(mdp: &M, config: &Config) -> StateValue<M::State>
 where
     M: MDP,

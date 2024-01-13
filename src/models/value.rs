@@ -6,6 +6,9 @@ use super::{Action, Policy, Sampler, State};
 
 use std::collections::HashMap;
 
+/// # State Value
+///
+/// Represents a mapping from states to values.
 #[derive(Debug, Clone)]
 pub struct StateValue<S>(HashMap<S, f64>)
 where
@@ -15,6 +18,7 @@ impl<S> StateValue<S>
 where
     S: State,
 {
+    /// Creates a new state value with each state mapped to zero.
     pub fn new(states: &Sampler<S>) -> Self {
         let mut map = HashMap::new();
         for state in states {
@@ -23,6 +27,7 @@ where
         Self(map)
     }
 
+    /// Returns the value associated with the given state.
     pub fn get(&self, state: &S) -> f64 {
         *self
             .0
@@ -30,11 +35,15 @@ where
             .unwrap_or_else(|| panic!("{}", NotFound::StateInStateValue))
     }
 
+    /// Inserts the given value for the given state.
     pub fn insert(&mut self, state: &S, value: f64) {
         self.0.insert(state.clone(), value);
     }
 }
 
+/// # State Action Value
+///
+/// Represents a mapping from actions to values for a given state.
 #[derive(Debug, Clone)]
 pub struct StateActionValue<A>(HashMap<A, f64>)
 where
@@ -44,6 +53,7 @@ impl<A> StateActionValue<A>
 where
     A: Action,
 {
+    /// Creates a new state action value with each action mapped to zero.
     pub fn new(actions: &Sampler<A>) -> Self {
         let mut map = HashMap::new();
         for action in actions {
@@ -52,6 +62,7 @@ where
         Self(map)
     }
 
+    /// Returns the value associated with the given action.
     pub fn get(&self, action: &A) -> f64 {
         *self
             .0
@@ -59,10 +70,12 @@ where
             .unwrap_or_else(|| panic!("{}", NotFound::ActionInStateActionValue))
     }
 
+    /// Inserts the given value for the given action.
     pub fn insert(&mut self, action: &A, value: f64) {
         self.0.insert(action.clone(), value);
     }
 
+    /// Returns the action with the highest value.
     pub fn greedy(&self) -> &A {
         let (best_action, _) = self
             .0
@@ -79,6 +92,8 @@ where
         best_action
     }
 
+    /// Returns a random action with probability epsilon
+    /// or the greedy action with probability 1 - epsilon.
     pub fn epsilon_greedy<'a>(&'a self, actions: &'a Sampler<A>, epsilon: f64) -> &A {
         if random::<f64>() < epsilon {
             actions.get_random()
@@ -88,6 +103,9 @@ where
     }
 }
 
+/// # Action Value
+///
+/// Represents a mapping from states and actions to values.
 #[derive(Debug, Clone)]
 pub struct ActionValue<S, A>(HashMap<S, StateActionValue<A>>)
 where
@@ -99,6 +117,7 @@ where
     S: State,
     A: Action,
 {
+    /// Creates a new action value with each state-action pair mapped to zero.
     pub fn new(states: &Sampler<S>, actions: &Sampler<A>) -> Self {
         let mut map = HashMap::new();
         for state in states {
@@ -107,6 +126,7 @@ where
         Self(map)
     }
 
+    /// Returns the value associated with the given state-action pair.
     pub fn get(&self, state: &S, action: &A) -> f64 {
         self.0
             .get(state)
@@ -114,6 +134,7 @@ where
             .get(action)
     }
 
+    /// Inserts the given value for the given state-action pair.
     pub fn insert(&mut self, state: &S, action: &A, value: f64) {
         self.0
             .get_mut(state)
@@ -121,6 +142,7 @@ where
             .insert(action, value);
     }
 
+    /// Returns the action with the highest value for the given state.
     pub fn greedy(&self, state: &S) -> &A {
         self.0
             .get(state)
@@ -128,6 +150,9 @@ where
             .greedy()
     }
 
+    /// For a given state, returns the action
+    /// with the highest value with probability 1 - epsilon
+    /// or a random action with probability epsilon.
     pub fn epsilon_greedy<'a>(&'a self, actions: &'a Sampler<A>, state: &S, epsilon: f64) -> &A {
         self.0
             .get(state)
@@ -135,6 +160,7 @@ where
             .epsilon_greedy(actions, epsilon)
     }
 
+    /// Returns a policy that maps each state to the action with the highest value.
     pub fn greedy_policy(&self, states: &Sampler<S>, actions: &Sampler<A>) -> Policy<S, A> {
         let mut policy = Policy::new(states, actions);
         for state in states {
