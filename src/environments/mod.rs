@@ -4,4 +4,5 @@
 //! that can be used in examples and tests.
 //! It currently only contains the Gridworld environment.
 
+pub mod bandit;
 pub mod gridworld;

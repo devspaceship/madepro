@@ -12,3 +12,4 @@ repository = "https://github.com/devspaceship/madepro"
 
 [dependencies]
 rand = "0.8.5"
+rand_distr = "0.4.3"
